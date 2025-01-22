@@ -91,4 +91,47 @@ function destroy(req, res) {
   });
 }
 
-module.exports = { index, show, store, destroy };
+function update(req, res) {
+  const { id } = req.params;
+  const {
+    nome,
+    numero_stanze,
+    numero_letti,
+    numero_bagni,
+    metri_quadrati,
+    indirizzo,
+    email_proprietario,
+    immagine,
+    tipologia,
+    numero_like,
+    id_proprietario,
+  } = req.body;
+
+  const sql = `UPDATE immobile SET nome = ?, numero_stanze = ?, numero_letti = ?, numero_bagni = ?, metri_quadrati = ?, indirizzo = ?, email_proprietario = ?, immagine = ?, tipologia = ?, numero_like = ?, id_proprietario = ? WHERE id = ${id}`;
+
+  connection.query(
+    sql,
+    [
+      nome,
+      numero_stanze,
+      numero_letti,
+      numero_bagni,
+      metri_quadrati,
+      indirizzo,
+      email_proprietario,
+      immagine,
+      tipologia,
+      numero_like,
+      id_proprietario,
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+      if (results.length === 0)
+        return res.status(404).json({ error: "Immobile not found" });
+
+      res.json("modificato");
+    }
+  );
+}
+
+module.exports = { index, show, store, destroy, update };
