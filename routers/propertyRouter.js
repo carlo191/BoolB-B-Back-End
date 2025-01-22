@@ -8,4 +8,7 @@ router.get("/", controller.index);
 //show
 router.get("/:id", controller.show);
 
+//store
+router.post("/", controller.store);
+
 module.exports = router;

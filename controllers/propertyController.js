@@ -34,4 +34,47 @@ function show(req, res) {
   });
 }
 
-module.exports = { index, show };
+function store(req, res) {
+  const {
+    nome,
+    numero_stanze,
+    numero_letti,
+    numero_bagni,
+    metri_quadrati,
+    indirizzo,
+    email_proprietario,
+    immagine,
+    tipologia,
+    numero_like,
+    id_proprietario,
+  } = req.body;
+
+  const sql = `INSERT INTO immobile (nome, numero_stanze, numero_letti, numero_bagni, metri_quadrati, indirizzo, email_proprietario, immagine, tipologia, numero_like, id_proprietario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+
+  connection.query(
+    sql,
+    [
+      nome,
+      numero_stanze,
+      numero_letti,
+      numero_bagni,
+      metri_quadrati,
+      indirizzo,
+      email_proprietario,
+      immagine,
+      tipologia,
+      numero_like,
+      id_proprietario,
+    ],
+    (err, results) => {
+      if (err)
+        return res
+          .status(500)
+          .json({ error: "Database query failed", err: err.sqlMessage });
+
+      res.json(results);
+    }
+  );
+}
+
+module.exports = { index, show, store };
