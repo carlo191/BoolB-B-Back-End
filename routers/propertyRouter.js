@@ -11,4 +11,7 @@ router.get("/:id", controller.show);
 //store
 router.post("/", controller.store);
 
+//store
+router.delete("/:id", controller.destroy);
+
 module.exports = router;

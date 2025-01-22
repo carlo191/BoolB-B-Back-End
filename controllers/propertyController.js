@@ -18,9 +18,9 @@ function index(req, res) {
 function show(req, res) {
   const { id } = req.params;
 
-  const sql1 = "SELECT * FROM immobile WHERE id = ?";
+  const sql = "SELECT * FROM immobile WHERE id = ?";
 
-  connection.query(sql1, [id], (err, results) => {
+  connection.query(sql, [id], (err, results) => {
     if (err) return res.status(500).json({ error: "Database query failed" });
     if (results.length === 0)
       return res.status(404).json({ error: "Immobile not found" });
@@ -77,4 +77,18 @@ function store(req, res) {
   );
 }
 
-module.exports = { index, show, store };
+function destroy(req, res) {
+  const { id } = req.params;
+
+  const sql = "DELETE FROM immobile WHERE id = ?";
+
+  connection.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: "Database query failed" });
+    if (results.length === 0)
+      return res.status(404).json({ error: "Immobile not found" });
+
+    res.json("eliminato");
+  });
+}
+
+module.exports = { index, show, store, destroy };
