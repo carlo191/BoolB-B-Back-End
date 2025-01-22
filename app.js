@@ -13,6 +13,9 @@ app.use(express.json());
 const property = require("./routers/propertyRouter.js");
 app.use("/property", property);
 
+const review = require("./routers/reviewRouter.js");
+app.use("/review", review);
+
 const errorsHandler = require("./middlewares/error.js");
 app.use(errorsHandler.errorsHandler);
 app.use(errorsHandler.notFound);
