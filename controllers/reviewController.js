@@ -93,7 +93,7 @@ function update(req, res) {
         return res
             .status(500)
             .json("contenuto must NOT be a number, empty or less than 3");
-    if (isNaN(voto) || voto <= 0)
+    if (isNaN(voto) || voto <= 0 || voto > 5)
         return res
             .status(500)
             .json("numero_stanze must be a number and greater than 0");
