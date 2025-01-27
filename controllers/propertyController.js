@@ -11,8 +11,28 @@ function index(req, res) {
     let immobili = results.map((immobile) => ({
       ...immobile,
       immagine: `${process.env.HOST_DOMAIN}:${process.env.HOST_PORT}/img/${immobile.immagine}`,
+      tipologie: [],
     }));
-    res.json(immobili);
+
+    const promises = immobili.map((immobile) => {
+      const sql2 = `SELECT t.tipologia, t.icona
+                    FROM immobile as i 
+                    JOIN tipologia_immobile as ti ON i.id = ti.id_immobile
+                    JOIN tipologia as t ON ti.id_tipologia = t.id
+                    WHERE i.id = ?;`;
+
+      return new Promise((resolve, reject) => {
+        connection.query(sql2, [immobile.id], (err, results) => {
+          if (err) return reject(err);
+          immobile.tipologie = results;
+          resolve();
+        });
+      });
+    });
+
+    Promise.all(promises)
+      .then(() => res.json(immobili))
+      .catch((err) => res.status(500).json({ error: "Database query failed" }));
   });
 }
 
@@ -32,19 +52,35 @@ function show(req, res) {
     let immobile = {
       ...results[0],
       immagine: `${process.env.HOST_DOMAIN}:${process.env.HOST_PORT}/img/${results[0].immagine}`,
+      tipologie: [],
       recensioni: [],
     };
 
-    const sql2 =
-      "SELECT * FROM recensione JOIN immobile ON immobile.id = recensione.id_immobile WHERE immobile.id = ?;";
+    const sql2 = `SELECT t.tipologia, t.icona
+      FROM immobile as i 
+      JOIN tipologia_immobile as ti ON i.id = ti.id_immobile
+      JOIN tipologia as t ON ti.id_tipologia = t.id
+      WHERE i.id = ?;`;
 
     connection.query(sql2, [id], (err, results) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
       if (results.length === 0)
         return res.status(404).json({ error: "Immobile not found" });
 
-      immobile.recensioni = results;
-      res.json(immobile);
+      immobile.tipologie = results;
+
+      const sql3 =
+        "SELECT recensione.* FROM recensione JOIN immobile ON immobile.id = recensione.id_immobile WHERE immobile.id = ?;";
+
+      connection.query(sql3, [id], (err, results) => {
+        if (err)
+          return res.status(500).json({ error: "Database query failed" });
+        if (results.length === 0)
+          return res.status(404).json({ error: "Immobile not found" });
+
+        immobile.recensioni = results;
+        res.json(immobile);
+      });
     });
   });
 }
