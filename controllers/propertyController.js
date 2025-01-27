@@ -2,17 +2,16 @@ const connection = require("./../data/db");
 
 function index(req, res) {
   const sql = `SELECT i.id, i.nome, i.numero_stanze, i.numero_letti, i.numero_bagni, i.metri_quadrati, 
-    i.indirizzo, i.email_proprietario, i.immagine, i.tipologia, i.numero_like
+    i.indirizzo, i.email_proprietario, i.immagine, i.numero_like
     FROM immobile as i`;
 
   connection.query(sql, (err, results) => {
     if (err) return res.status(500).json({ error: "Database query failed" });
 
-    const immobili = results.map((immobile) => ({
+    let immobili = results.map((immobile) => ({
       ...immobile,
       immagine: `${process.env.HOST_DOMAIN}:${process.env.HOST_PORT}/img/${immobile.immagine}`,
     }));
-
     res.json(immobili);
   });
 }
@@ -21,7 +20,7 @@ function show(req, res) {
   const { id } = req.params;
 
   const sql = `SELECT i.id, i.nome, i.numero_stanze, i.numero_letti, i.numero_bagni, i.metri_quadrati, 
-    i.indirizzo, i.email_proprietario, i.immagine, i.tipologia, i.numero_like
+    i.indirizzo, i.email_proprietario, i.immagine, i.numero_like
     FROM immobile as i
     WHERE id = ?`;
 
@@ -30,12 +29,23 @@ function show(req, res) {
     if (results.length === 0)
       return res.status(404).json({ error: "Immobile not found" });
 
-    const immobile = {
+    let immobile = {
       ...results[0],
       immagine: `${process.env.HOST_DOMAIN}:${process.env.HOST_PORT}/img/${results[0].immagine}`,
+      recensioni: [],
     };
 
-    res.json(immobile);
+    const sql2 =
+      "SELECT * FROM recensione JOIN immobile ON immobile.id = recensione.id_immobile WHERE immobile.id = ?;";
+
+    connection.query(sql2, [id], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+      if (results.length === 0)
+        return res.status(404).json({ error: "Immobile not found" });
+
+      immobile.recensioni = results;
+      res.json(immobile);
+    });
   });
 }
 
@@ -49,12 +59,11 @@ function store(req, res) {
     indirizzo,
     email_proprietario,
     immagine,
-    tipologia,
     numero_like,
     id_proprietario,
   } = req.body;
 
-  const sql = `INSERT INTO immobile (nome, numero_stanze, numero_letti, numero_bagni, metri_quadrati, indirizzo, email_proprietario, immagine, tipologia, numero_like, id_proprietario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+  const sql = `INSERT INTO immobile (nome, numero_stanze, numero_letti, numero_bagni, metri_quadrati, indirizzo, email_proprietario, immagine, numero_like, id_proprietario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
   if (!isNaN(nome) || nome.length < 3)
     return res
@@ -100,7 +109,6 @@ function store(req, res) {
       indirizzo,
       email_proprietario,
       immagine,
-      tipologia,
       numero_like,
       id_proprietario,
     ],
@@ -141,12 +149,11 @@ function update(req, res) {
     indirizzo,
     email_proprietario,
     immagine,
-    tipologia,
     numero_like,
     id_proprietario,
   } = req.body;
 
-  const sql = `UPDATE immobile SET nome = ?, numero_stanze = ?, numero_letti = ?, numero_bagni = ?, metri_quadrati = ?, indirizzo = ?, email_proprietario = ?, immagine = ?, tipologia = ?, numero_like = ?, id_proprietario = ? WHERE id = ${id}`;
+  const sql = `UPDATE immobile SET nome = ?, numero_stanze = ?, numero_letti = ?, numero_bagni = ?, metri_quadrati = ?, indirizzo = ?, email_proprietario = ?, immagine = ?, numero_like = ?, id_proprietario = ? WHERE id = ${id}`;
 
   connection.query(
     sql,
@@ -159,7 +166,6 @@ function update(req, res) {
       indirizzo,
       email_proprietario,
       immagine,
-      tipologia,
       numero_like,
       id_proprietario,
     ],
