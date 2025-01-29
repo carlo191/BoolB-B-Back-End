@@ -16,6 +16,9 @@ app.use("/property", property);
 const review = require("./routers/reviewRouter.js");
 app.use("/review", review);
 
+const category = require("./routers/categoryRouter.js");
+app.use("/category", category);
+
 const errorsHandler = require("./middlewares/error.js");
 app.use(errorsHandler.errorsHandler);
 app.use(errorsHandler.notFound);
