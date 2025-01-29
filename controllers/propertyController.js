@@ -21,7 +21,7 @@ function show(req, res) {
   const { id } = req.params;
 
   const sql = `SELECT i.id, i.nome, i.numero_stanze, i.numero_letti, i.numero_bagni, i.metri_quadrati, 
-    i.indirizzo, i.email_proprietario, i.immagine, i.numero_like, t.tipologia, t.icona
+    i.indirizzo, i.email_proprietario, i.immagine, i.numero_like, t.tipologia, t.icona, t.id as id_tipologia
     FROM immobile as i JOIN tipologia as t ON i.id_tipologia = t.id
     WHERE i.id = ?`;
 
