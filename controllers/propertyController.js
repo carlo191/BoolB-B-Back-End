@@ -2,7 +2,7 @@ const connection = require("./../data/db");
 
 function index(req, res) {
   const sql = `SELECT i.id, i.nome, i.numero_stanze, i.numero_letti, i.numero_bagni, i.metri_quadrati, 
-    i.indirizzo, i.email_proprietario, i.immagine, i.numero_like, t.tipologia, t.icona
+    i.indirizzo, i.email_proprietario, i.immagine, i.numero_like, t.tipologia, t.icona, t.id as id_tipologia
     FROM immobile as i JOIN tipologia as t ON i.id_tipologia = t.id;`;
 
   connection.query(sql, (err, results) => {
@@ -62,9 +62,10 @@ function store(req, res) {
     immagine,
     numero_like,
     id_proprietario,
+    id_tipologia,
   } = req.body;
 
-  const sql = `INSERT INTO immobile (nome, numero_stanze, numero_letti, numero_bagni, metri_quadrati, indirizzo, email_proprietario, immagine, numero_like, id_proprietario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+  const sql = `INSERT INTO immobile (nome, numero_stanze, numero_letti, numero_bagni, metri_quadrati, indirizzo, email_proprietario, immagine, numero_like, id_proprietario, id_tipologia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
   if (!isNaN(nome) || nome.length < 3)
     return res
@@ -98,6 +99,8 @@ function store(req, res) {
     return res.status(500).json("numero_like must be a positive number");
   if (isNaN(id_proprietario) || id_proprietario < 0)
     return res.status(500).json("id_proprietario must be a positive number");
+  if (isNaN(id_tipologia) || id_tipologia < 0)
+    return res.status(500).json("id_tipologia must be a positive number");
 
   connection.query(
     sql,
@@ -112,6 +115,7 @@ function store(req, res) {
       immagine,
       numero_like,
       id_proprietario,
+      id_tipologia,
     ],
     (err, results) => {
       if (err)
@@ -152,9 +156,10 @@ function update(req, res) {
     immagine,
     numero_like,
     id_proprietario,
+    id_tipologia,
   } = req.body;
 
-  const sql = `UPDATE immobile SET nome = ?, numero_stanze = ?, numero_letti = ?, numero_bagni = ?, metri_quadrati = ?, indirizzo = ?, email_proprietario = ?, immagine = ?, numero_like = ?, id_proprietario = ? WHERE id = ${id}`;
+  const sql = `UPDATE immobile SET nome = ?, numero_stanze = ?, numero_letti = ?, numero_bagni = ?, metri_quadrati = ?, indirizzo = ?, email_proprietario = ?, immagine = ?, numero_like = ?, id_proprietario = ?, id_tipologia = ? WHERE id = ${id}`;
 
   connection.query(
     sql,
@@ -169,6 +174,7 @@ function update(req, res) {
       immagine,
       numero_like,
       id_proprietario,
+      id_tipologia,
     ],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
