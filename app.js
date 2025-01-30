@@ -13,6 +13,9 @@ app.use(express.json());
 const property = require("./routers/propertyRouter.js");
 app.use("/property", property);
 
+const propertyFiltered = require("./routers/propertyFilteredRouter.js");
+app.use("/propertyFiltered", propertyFiltered);
+
 const review = require("./routers/reviewRouter.js");
 app.use("/review", review);
 

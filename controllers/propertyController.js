@@ -1,7 +1,7 @@
 const connection = require("./../data/db");
 
 function index(req, res) {
-  let limit = parseInt(req.query.limit) || null;
+  let limit = parseInt(req.query.limit) || 35;
 
   if (!Number.isInteger(limit) || limit < 1) limit = 35;
   limit = Math.min(limit, 35);
