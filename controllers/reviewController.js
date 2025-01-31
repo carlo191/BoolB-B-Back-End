@@ -1,6 +1,7 @@
 const connection = require("./../data/db");
 
 function store(req, res) {
+  console.log("Dati ricevuti dal frontend:", req.body);
   const { nome_utente, id_immobile, contenuto, voto } = req.body;
 
   const sql = `INSERT INTO recensione (nome_utente,
@@ -8,17 +9,17 @@ function store(req, res) {
     contenuto,
     voto) VALUES (?, ?, ?, ?);`;
 
-  if (!isNaN(nome_utente) || contenuto.length < 3)
+  if (!isNaN(nome_utente) || contenuto.length < 1)
     return res
       .status(500)
       .json(" nome_utente must NOT be a number, empty or less than 3");
   if (isNaN(id_immobile) || id_immobile < 0)
     return res.status(500).json("id_immobile must be a positive number");
-  if (!isNaN(contenuto) || contenuto.length < 3)
+  if (!isNaN(contenuto) || contenuto.length < 1)
     return res
       .status(500)
       .json("contenuto must NOT be a number, empty or less than 3");
-  if (isNaN(voto) || voto <= 0 || voto > 5)
+  if (isNaN(voto) || voto < 0 || voto > 5)
     return res
       .status(500)
       .json("voto must be a number, greater than 0 and less than 6");
