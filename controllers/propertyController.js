@@ -1,10 +1,10 @@
 const connection = require("./../data/db");
 
 function index(req, res) {
-  let limit = parseInt(req.query.limit) || 35;
+  let limit = parseInt(req.query.limit) || 300;
 
-  if (!Number.isInteger(limit) || limit < 1) limit = 35;
-  limit = Math.min(limit, 35);
+  if (!Number.isInteger(limit) || limit < 1) limit = 300;
+  limit = Math.min(limit, 300);
 
   const sql = `SELECT i.id, i.nome, i.numero_stanze, i.numero_letti, i.numero_bagni, i.metri_quadrati,  i.indirizzo, 
 	i.email_proprietario, i.immagine, i.numero_like, i.id_proprietario, t.tipologia, t.id as id_tipologia,
@@ -62,6 +62,7 @@ function show(req, res) {
 }
 
 function store(req, res) {
+  console.log(req.body);
   const {
     nome,
     numero_stanze,
