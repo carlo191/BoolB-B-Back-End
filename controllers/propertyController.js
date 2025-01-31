@@ -48,12 +48,10 @@ function show(req, res) {
     };
 
     const sql2 =
-      "SELECT recensione.* FROM recensione JOIN immobile ON immobile.id = recensione.id_immobile WHERE immobile.id = ?;";
+      "SELECT recensione.* FROM recensione LEFT JOIN immobile ON immobile.id = recensione.id_immobile WHERE immobile.id = ?;";
 
     connection.query(sql2, [id], (err, results) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
-      if (results.length === 0)
-        return res.status(404).json({ error: "Immobile not found" });
 
       immobile.recensioni = results;
       res.json(immobile);
