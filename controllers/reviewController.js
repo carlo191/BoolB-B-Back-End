@@ -25,7 +25,7 @@ function store(req, res) {
 
   connection.query(
     sql,
-    [id_utente, id_immobile, contenuto, voto],
+    [nome_utente, id_immobile, contenuto, voto],
     (err, results) => {
       if (err)
         return res.status(500).json({
@@ -75,7 +75,7 @@ function update(req, res) {
 
   connection.query(
     sql,
-    [id_utente, id_immobile, contenuto, voto],
+    [nome_utente, id_immobile, contenuto, voto],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
       if (results.length === 0)
