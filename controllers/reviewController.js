@@ -8,10 +8,10 @@ function store(req, res) {
     contenuto,
     voto,
     data_creazione,
-    giorni_permanenza,
+    numero_giorni,
   } = req.body;
 
-  const sql = `INSERT INTO recensione (nome_utente, id_immobile, contenuto, voto, data_creazione, giorni_permanenza) VALUES (?, ?, ?, ?);`;
+  const sql = `INSERT INTO recensione (nome_utente, id_immobile, contenuto, voto, data_creazione, numero_giorni) VALUES (?, ?, ?, ?);`;
 
   // Check Nome
   if (!isNaN(nome_utente) || contenuto.length < 1)
@@ -32,8 +32,8 @@ function store(req, res) {
       .status(500)
       .json("voto must be a number, greater than 0 and less than 6");
   // Check Giorni
-  if (isNaN(giorni_permanenza) || giorni_permanenza < 0)
-    return res.status(500).json("giorni_permanenza must be a positive number");
+  if (isNaN(numero_giorni) || numero_giorni < 0)
+    return res.status(500).json("numero_giorni must be a positive number");
   // Check Data
   const dataSoggiorno = new Date(data_creazione);
   if (isNaN(dataSoggiorno.getTime())) {
@@ -51,14 +51,7 @@ function store(req, res) {
 
   connection.query(
     sql,
-    [
-      nome_utente,
-      id_immobile,
-      contenuto,
-      voto,
-      data_creazione,
-      giorni_permanenza,
-    ],
+    [nome_utente, id_immobile, contenuto, voto, data_creazione, numero_giorni],
     (err, results) => {
       if (err)
         return res.status(500).json({
@@ -87,10 +80,9 @@ function destroy(req, res) {
 
 function update(req, res) {
   const { id } = req.params;
-  const { nome_utente, id_immobile, contenuto, voto, giorni_permanenza } =
-    req.body;
+  const { nome_utente, id_immobile, contenuto, voto, numero_giorni } = req.body;
 
-  const sql = `UPDATE recensione SET nome_utente = ?, id_immobile = ?, contenuto = ?, voto = ?, giorni_permanenza = ? WHERE id = ${id}`;
+  const sql = `UPDATE recensione SET nome_utente = ?, id_immobile = ?, contenuto = ?, voto = ?, numero_giorni = ? WHERE id = ${id}`;
 
   if (!isNaN(nome_utente) || contenuto.length < 3)
     return res
@@ -107,12 +99,12 @@ function update(req, res) {
       .status(500)
       .json("numero_stanze must be a number and greater than 0");
   // Check Giorni
-  if (isNaN(giorni_permanenza) || giorni_permanenza < 0)
-    return res.status(500).json("giorni_permanenza must be a positive number");
+  if (isNaN(numero_giorni) || numero_giorni < 0)
+    return res.status(500).json("numero_giorni must be a positive number");
 
   connection.query(
     sql,
-    [nome_utente, id_immobile, contenuto, voto, giorni_permanenza],
+    [nome_utente, id_immobile, contenuto, voto, numero_giorni],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
       if (results.length === 0)
