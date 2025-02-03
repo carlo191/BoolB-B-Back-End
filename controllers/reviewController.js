@@ -11,10 +11,10 @@ function store(req, res) {
     numero_giorni,
   } = req.body;
 
-  const sql = `INSERT INTO recensione (nome_utente, id_immobile, contenuto, voto, data_soggiorno, numero_giorni) VALUES (?, ?, ?, ?);`;
+  const sql = `INSERT INTO recensione (nome_utente, id_immobile, contenuto, voto, data_soggiorno, numero_giorni) VALUES (?, ?, ?, ?, ?, ?);`;
 
   // Check Nome
-  if (!isNaN(nome_utente) || contenuto.length < 1)
+  if (!isNaN(nome_utente) || contenuto.length < 3)
     return res
       .status(500)
       .json(" nome_utente must NOT be a number, empty or less than 3");
@@ -22,7 +22,7 @@ function store(req, res) {
   if (isNaN(id_immobile) || id_immobile < 0)
     return res.status(500).json("id_immobile must be a positive number");
   // Check Contenuto
-  if (!isNaN(contenuto) || contenuto.length < 1)
+  if (!isNaN(contenuto) || contenuto.length < 3)
     return res
       .status(500)
       .json("contenuto must NOT be a number, empty or less than 3");
